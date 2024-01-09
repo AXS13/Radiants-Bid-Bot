@@ -1,4 +1,4 @@
-const { PublicKey, Connection, Keypair } = require('@solana/web3.js');
+const { PublicKey, Connection, Keypair, clusterApiUrl } = require('@solana/web3.js');
 const BufferLayout = require('@solana/buffer-layout');
 const anchor = require('@coral-xyz/anchor');
 const borsh = require('borsh');
@@ -6,7 +6,7 @@ const bs58 = require('bs58');
 
 
 
-/*
+
 async function getParsedTransactionDetailsIncludingRawText(transactionSignature) {
     const connection = new Connection(clusterApiUrl('devnet'));
     const parsedTransaction = await connection.getParsedTransaction(transactionSignature, { maxSupportedTransactionVersion: 0 });
@@ -26,12 +26,13 @@ const transactionSignature = 'gjvLrTL3MVfi7CDMu8xPM4ocZxzADTgbYNLwXPdWE8fYHfDhzw
 
 getParsedTransactionDetailsIncludingRawText(transactionSignature).then(data => {
     if (data) {
-        // console.log('Parsed Instructions:', data.instructions);
+        console.log('Parsed Instructions:', data.instructions);
     } else {
         console.log('Transaction not found or lacks additional data');
     }
 });
 
+/*
 function decodeBase58Data(encodedData) {
     try {
         let decodedBuffer = bs58.decode(encodedData);
@@ -96,8 +97,8 @@ decodedData.duration = bufferToBigInt(decodedData.duration);
 decodedData.owner = decodedData.owner.toString('utf-8');
 
 console.log('Processed Decoded Data:', decodedData);
-*/
 
+/*
 // Assuming you have the IDL for your Solana program
 const IDL = {
     "version": "0.1.0",
@@ -187,7 +188,7 @@ let decodedAuctionStateData = bidCoder.accounts.decode("AuctionState", dataBuffe
 
 
 console.log(decodedAuctionStateData);
-
+*/
 
 
 
