@@ -1,0 +1,1542 @@
+{
+  "version": "0.1.0",
+  "name": "nft_bidding",
+  "instructions": [
+    {
+      "name": "burnNft",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "auction",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nft",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftMetadata",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nftEdition",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "auctionNft",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bidEscrow",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "bid"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "BidEscrow",
+                "path": "bid_escrow.auction"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "payer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrowAssociatedToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "eccVerifier",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "collection",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "configAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "programAuthority",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "murder-tree"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "config_account"
+              }
+            ],
+            "programId": {
+              "kind": "account",
+              "type": "publicKey",
+              "path": "murder_tree"
+            }
+          }
+        },
+        {
+          "name": "collectionMetadata",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "metadata"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "token_metadata_program"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "Mint",
+                "path": "collection"
+              }
+            ],
+            "programId": {
+              "kind": "account",
+              "type": "publicKey",
+              "path": "token_metadata_program"
+            }
+          }
+        },
+        {
+          "name": "collectionMasterEdition",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "metadata"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "token_metadata_program"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "Mint",
+                "path": "collection"
+              },
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "edition"
+              }
+            ],
+            "programId": {
+              "kind": "account",
+              "type": "publicKey",
+              "path": "token_metadata_program"
+            }
+          }
+        },
+        {
+          "name": "entityCreator",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "entity_creator"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "config_account"
+              }
+            ],
+            "programId": {
+              "kind": "account",
+              "type": "publicKey",
+              "path": "murder_tree"
+            }
+          }
+        },
+        {
+          "name": "keyToAsset",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treeAuthority",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "merkle_tree"
+              }
+            ],
+            "programId": {
+              "kind": "account",
+              "type": "publicKey",
+              "path": "bubblegum_program"
+            }
+          }
+        },
+        {
+          "name": "merkleTree",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bubblegumSigner",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "collection_cpi"
+              }
+            ],
+            "programId": {
+              "kind": "account",
+              "type": "publicKey",
+              "path": "bubblegum_program"
+            }
+          }
+        },
+        {
+          "name": "nftBidding",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "nft-bidding"
+              }
+            ]
+          }
+        },
+        {
+          "name": "murderTree",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "logWrapper",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "bubblegumProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "compressionProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "nftCollection",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "BurnNftArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "claimRadiant",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "radiant",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "auctionAssociatedAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "auction",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bidEscrow",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "bid"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "AuctionState",
+                "path": "auction"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "payer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "radiantAssociatedAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "createAuction",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "nft",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "auction",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "auction"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "Mint",
+                "path": "nft"
+              }
+            ]
+          }
+        },
+        {
+          "name": "nftBidding",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "CreateAuctionArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "createBid",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "auction",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "nft",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "nftAssociatedToken",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "bidEscrow",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "bid"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "AuctionState",
+                "path": "auction"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "payer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "createOracle",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "oracle",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "oracle"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "owner"
+              },
+              {
+                "kind": "arg",
+                "type": {
+                  "defined": "CreateOracleArgs"
+                },
+                "path": "args.collection"
+              }
+            ]
+          }
+        },
+        {
+          "name": "nftBidding",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "nft-bidding"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "CreateOracleArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "depositNft",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "auction",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "nft",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK Whitelisting??"
+          ]
+        },
+        {
+          "name": "mintMetadata",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "nftAssociatedToken",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "bidEscrow",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "bid"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "AuctionState",
+                "path": "auction"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "payer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrowAssociatedToken",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "mintMasterEdition",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "editAuction",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "nft",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "auction",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "auction"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "Mint",
+                "path": "nft"
+              }
+            ]
+          }
+        },
+        {
+          "name": "nftBidding",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "EditAuctionArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "editBid",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "auction",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "nft",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "nftAssociatedToken",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "bidEscrow",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "bid"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "auction"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "payer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initNftBidding",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "admin",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "dev",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "nftBidding",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "nft-bidding"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "updateAllowlists",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "auction",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "UpdateAllowlistsArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "updateHighBid",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "auction",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "auction"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "Mint",
+                "path": "nft"
+              }
+            ]
+          }
+        },
+        {
+          "name": "nft",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "nftBidding",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "nft-bidding"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "UpdateHighBidArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "updateOracle",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "oracle",
+          "isMut": true,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "oracle"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "owner"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "Oracle",
+                "path": "oracle.collection"
+              }
+            ]
+          },
+          "relations": [
+            "owner"
+          ]
+        },
+        {
+          "name": "nftBidding",
+          "isMut": false,
+          "isSigner": false,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "nft-bidding"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": "UpdateOracleArgs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "withdrawNft",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "auction",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "nft",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "mintMetadata",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "nftAssociatedToken",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "bidEscrow",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "type": "string",
+                "value": "bid"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "account": "BidEscrow",
+                "path": "bid_escrow.auction"
+              },
+              {
+                "kind": "account",
+                "type": "publicKey",
+                "path": "payer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrowAssociatedToken",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK"
+          ]
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Oracle",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "floorPrice",
+            "type": "u64"
+          },
+          {
+            "name": "twapFloorPrice",
+            "type": "u64"
+          },
+          {
+            "name": "lastSalePrice",
+            "type": "u64"
+          },
+          {
+            "name": "avgSalePrice",
+            "type": "u64"
+          },
+          {
+            "name": "lastUpdated",
+            "type": "u64"
+          },
+          {
+            "name": "owner",
+            "type": "publicKey"
+          },
+          {
+            "name": "collection",
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "NftBidding",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "publicKey"
+          },
+          {
+            "name": "dev",
+            "type": "publicKey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AuctionState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "startTimestamp",
+            "type": "i64"
+          },
+          {
+            "name": "endTimestamp",
+            "type": "i64"
+          },
+          {
+            "name": "owner",
+            "type": "publicKey"
+          },
+          {
+            "name": "mint",
+            "type": "publicKey"
+          },
+          {
+            "name": "winner",
+            "type": "publicKey"
+          },
+          {
+            "name": "highestBid",
+            "type": "publicKey"
+          },
+          {
+            "name": "highestBidder",
+            "type": "publicKey"
+          },
+          {
+            "name": "highestBidTs",
+            "type": "u64"
+          },
+          {
+            "name": "allowlists",
+            "type": {
+              "array": [
+                {
+                  "defined": "Allowlist"
+                },
+                2
+              ]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BidEscrow",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "publicKey"
+          },
+          {
+            "name": "auction",
+            "type": "publicKey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "collections",
+            "type": {
+              "vec": {
+                "defined": "Collection"
+              }
+            }
+          },
+          {
+            "name": "burned",
+            "type": "u16"
+          },
+          {
+            "name": "isWinnerAt",
+            "type": {
+              "option": "i64"
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "BurnNftArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "entityKey",
+            "type": "bytes"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CreateAuctionArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "startTimestamp",
+            "type": "i64"
+          },
+          {
+            "name": "endTimestamp",
+            "type": "i64"
+          },
+          {
+            "name": "duration",
+            "type": "i64"
+          },
+          {
+            "name": "owner",
+            "type": "publicKey"
+          },
+          {
+            "name": "mint",
+            "type": "publicKey"
+          },
+          {
+            "name": "winner",
+            "type": "publicKey"
+          },
+          {
+            "name": "highestBid",
+            "type": "publicKey"
+          },
+          {
+            "name": "highestBidder",
+            "type": "publicKey"
+          },
+          {
+            "name": "highestBidTs",
+            "type": "u64"
+          },
+          {
+            "name": "allowlists",
+            "type": {
+              "array": [
+                {
+                  "defined": "Allowlist"
+                },
+                2
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "CreateOracleArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "floorPrice",
+            "type": "u64"
+          },
+          {
+            "name": "twapFloorPrice",
+            "type": "u64"
+          },
+          {
+            "name": "lastSalePrice",
+            "type": "u64"
+          },
+          {
+            "name": "avgSalePrice",
+            "type": "u64"
+          },
+          {
+            "name": "lastUpdated",
+            "type": "u64"
+          },
+          {
+            "name": "owner",
+            "type": "publicKey"
+          },
+          {
+            "name": "collection",
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EditAuctionArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "startTimestamp",
+            "type": "i64"
+          },
+          {
+            "name": "endTimestamp",
+            "type": "i64"
+          },
+          {
+            "name": "duration",
+            "type": "i64"
+          },
+          {
+            "name": "owner",
+            "type": "publicKey"
+          },
+          {
+            "name": "mint",
+            "type": "publicKey"
+          },
+          {
+            "name": "winner",
+            "type": "publicKey"
+          },
+          {
+            "name": "highestBid",
+            "type": "publicKey"
+          },
+          {
+            "name": "highestBidder",
+            "type": "publicKey"
+          },
+          {
+            "name": "highestBidTs",
+            "type": "u64"
+          },
+          {
+            "name": "allowlists",
+            "type": {
+              "array": [
+                {
+                  "defined": "Allowlist"
+                },
+                2
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "UpdateAllowlistsArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "allowlists",
+            "type": {
+              "array": [
+                {
+                  "defined": "Allowlist"
+                },
+                2
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "UpdateHighBidArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "highestBid",
+            "type": "publicKey"
+          },
+          {
+            "name": "highestBidder",
+            "type": "publicKey"
+          },
+          {
+            "name": "highestBidTs",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UpdateOracleArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "floorPrice",
+            "type": "u64"
+          },
+          {
+            "name": "twapFloorPrice",
+            "type": "u64"
+          },
+          {
+            "name": "lastSalePrice",
+            "type": "u64"
+          },
+          {
+            "name": "avgSalePrice",
+            "type": "u64"
+          },
+          {
+            "name": "lastUpdated",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Allowlist",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "kind",
+            "type": "u8"
+          },
+          {
+            "name": "value",
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Collection",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "count",
+            "type": "u16"
+          },
+          {
+            "name": "value",
+            "type": "publicKey"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "NumericalOverflow",
+      "msg": "Numerical Overflow!"
+    },
+    {
+      "code": 6001,
+      "name": "UnauthorizedAccess",
+      "msg": "Unauthorized Access"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidAllowLists",
+      "msg": "Invalid AllowLists"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidMasterEdition",
+      "msg": "Invalid Master Edition"
+    },
+    {
+      "code": 6004,
+      "name": "UnexpectedMetadataUri",
+      "msg": "Unexpected Metadata URI"
+    }
+  ]
+}

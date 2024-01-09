@@ -1,36 +1,56 @@
-const { PublicKey, Connection, Keypair, clusterApiUrl } = require('@solana/web3.js');
-const BufferLayout = require('@solana/buffer-layout');
+const { Connection, clusterApiUrl } = require('@solana/web3.js');
+// const BufferLayout = require('@solana/buffer-layout');
 const anchor = require('@coral-xyz/anchor');
-const borsh = require('borsh');
-const bs58 = require('bs58');
+// const borsh = require('borsh');
+// const bs58 = require('bs58');
+const IDL = require('../idl/nft_bidding.json');
 
 
+// async function getParsedTransactionDetailsIncludingRawText(transactionSignature) {
+//     const connection = new Connection(clusterApiUrl('devnet'));
+//     const parsedTransaction = await connection.getParsedTransaction(transactionSignature, { maxSupportedTransactionVersion: 0 });
 
-
-async function getParsedTransactionDetailsIncludingRawText(transactionSignature) {
-    const connection = new Connection(clusterApiUrl('devnet'));
-    const parsedTransaction = await connection.getParsedTransaction(transactionSignature, { maxSupportedTransactionVersion: 0 });
-
-    if (parsedTransaction && parsedTransaction.meta) {
-        return {
-            instructions: parsedTransaction.transaction.message.instructions,
-            rawTextData: parsedTransaction.meta, // or a specific field within meta
-            raw: parsedTransaction// or a specific field within meta
-        };
-    } else {
-        return null;
-    }
-}
+//     if (parsedTransaction && parsedTransaction.meta) {
+//         return {
+//             instructions: parsedTransaction.transaction.message.instructions,
+//             rawTextData: parsedTransaction.meta, // or a specific field within meta
+//             raw: parsedTransaction// or a specific field within meta
+//         };
+//     } else {
+//         return null;
+//     }
+// }
 
 const transactionSignature = 'gjvLrTL3MVfi7CDMu8xPM4ocZxzADTgbYNLwXPdWE8fYHfDhzwJccRP1VDrQ27cryF5FeKfKfNzK4xTmA5gpdsN';
 
-getParsedTransactionDetailsIncludingRawText(transactionSignature).then(data => {
-    if (data) {
-        console.log('Parsed Instructions:', data.instructions);
+// getParsedTransactionDetailsIncludingRawText(transactionSignature).then(txData => {
+(async () => {
+    const conn = new Connection(clusterApiUrl('devnet'));
+    const tx = await conn.getTransaction(transactionSignature);
+
+    // console.log('tx: ', tx.transaction.message.instructions[0]);
+
+    if (tx) {
+        const coder = new anchor.BorshCoder(IDL);
+        const ix = coder.instruction.decode(
+            tx.transaction.message.instructions[0].data,
+            'base58',
+        );
+        if (!ix) throw new Error("could not parse data");
+        const accountMetas = tx.transaction.message.instructions[0].accounts.map(
+            (idx) => ({
+                pubkey: tx.transaction.message.accountKeys[idx],
+                isSigner: tx.transaction.message.isAccountSigner(idx),
+                isWritable: tx.transaction.message.isAccountWritable(idx),
+            }),
+        );
+        const formatted = coder.instruction.format(ix, accountMetas);
+        console.log(ix, formatted);
     } else {
         console.log('Transaction not found or lacks additional data');
     }
-});
+})();
+// });
 
 /*
 function decodeBase58Data(encodedData) {
