@@ -5,7 +5,7 @@ const { Connection, clusterApiUrl } = require('@solana/web3.js');
 const anchor = require('@coral-xyz/anchor');
 const IDL = require('../idl/nft_bidding.json');
 
-const transactionSignature = 'gjvLrTL3MVfi7CDMu8xPM4ocZxzADTgbYNLwXPdWE8fYHfDhzwJccRP1VDrQ27cryF5FeKfKfNzK4xTmA5gpdsN';
+const transactionSignature = 'yvupzbRZGwFbDGPz89dXfbHrR6fjW7EvPxKf57dWrXLJzbEEmVUyHMFfXzLkLeqSZPNt2K56da74WAZ5Vw6cRPb';
 
 (async () => {
     const conn = new Connection(clusterApiUrl('devnet'));
@@ -34,10 +34,10 @@ const transactionSignature = 'gjvLrTL3MVfi7CDMu8xPM4ocZxzADTgbYNLwXPdWE8fYHfDhzw
         function convertStringToObject(str) {
             // Add quotes around the keys
             str = str.replace(/([a-zA-Z0-9_]+)(?=:)/g, '"$1"');
-        
+
             // Add quotes around string-type values
             str = str.replace(/: ([a-zA-Z0-9_]+)/g, ': "$1"');
-        
+
             try {
                 return JSON.parse(str);
             } catch (e) {
@@ -45,12 +45,12 @@ const transactionSignature = 'gjvLrTL3MVfi7CDMu8xPM4ocZxzADTgbYNLwXPdWE8fYHfDhzw
                 return null;
             }
         }
-        
+
         let dataString = `${formatted?.args[0]?.data}`;
         let dataObject = convertStringToObject(dataString);
-        
+
         console.log(dataObject);
-        
+
 
 
     } else {
@@ -58,4 +58,18 @@ const transactionSignature = 'gjvLrTL3MVfi7CDMu8xPM4ocZxzADTgbYNLwXPdWE8fYHfDhzw
     }
 })();
 
+/* DEVNET TEST FOR MINT IMG DISPLAYING
 
+ttt = '7FfLHuJasGVyE25UHrbgmErnnQsFokCPE113M1Fk8RFC'
+// Using mint to get the image for displaying purpose
+const mint = [
+    ttt
+];
+
+(async () => {
+    const metaMint = await functions.getMetadata(mint);
+    console.log(metaMint[0]?.offChainMetadata?.metadata?.image);
+    console.log(metaMint);
+})();
+
+*/

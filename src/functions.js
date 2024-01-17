@@ -23,6 +23,7 @@ const functions = {
     // Get Mint
     async getMetadata(tokens) {
         const response = await fetch(`https://api.helius.xyz/v0/token-metadata?api-key=${process.env.HELIUS_API_KEY}`, {
+            // const response = await fetch(`https://api-devnet.helius.xyz/v0/token-metadata?api-key=${process.env.HELIUS_API_KEY}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -34,6 +35,27 @@ const functions = {
             }),
         });
 
+        const data = await response.json();
+        return data;
+    },
+
+    async getAssetsByOwner(owner) {
+        const response = await fetch(`https://mainnet.helius-rpc.com/?api-key=${process.env.HELIUS_API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                jsonrpc: '2.0',
+                id: 'my-id',
+                method: 'getAssetsByOwner',
+                params: {
+                    ownerAddress: owner,
+                    page: 1, // Starts at 1
+                    limit: 1000,
+                },
+            }),
+        });
         const data = await response.json();
         return data;
     },
