@@ -4,7 +4,7 @@ const { REST, Routes, ApplicationCommandOptionType } = require('discord.js');
 const commands = [
     {
         name:'status',
-        description:'Get uptime from the last reboot',
+        description:'Get the uptime from the last reboot.',
     }
 ];
 

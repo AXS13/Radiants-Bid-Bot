@@ -3,15 +3,15 @@ require('dotenv').config();
 const functions = require('./functions.js');
 const { Connection, clusterApiUrl } = require('@solana/web3.js');
 const anchor = require('@coral-xyz/anchor');
-const IDL = require('../idl/nft_bidding.json');
+const IDL = require('../idl/nft-bidding.json');
 
-const transactionSignature = 'yvupzbRZGwFbDGPz89dXfbHrR6fjW7EvPxKf57dWrXLJzbEEmVUyHMFfXzLkLeqSZPNt2K56da74WAZ5Vw6cRPb';
+const transactionSignature = '4T4wy3sjbhf2PjgbKCiycmWz6M6p6bAAyhocMU27ngEkyHTWvFeEyjT7RqsqwUZ3CTkhbr33KdPfrWS2Q75t3d5M';
 
 (async () => {
-    const conn = new Connection(clusterApiUrl('devnet'));
+    const conn = new Connection(`https://mainnet.helius-rpc.com/?api-key=${process.env.HELIUS_API_KEY}`, 'finalized');
     const tx = await conn.getTransaction(transactionSignature);
 
-    // console.log('tx: ', tx.transaction.message.instructions[0]);
+    //console.log('tx: ', tx.transaction.message.instructions[0]);
 
     if (tx) {
         const coder = new anchor.BorshCoder(IDL);
@@ -28,8 +28,8 @@ const transactionSignature = 'yvupzbRZGwFbDGPz89dXfbHrR6fjW7EvPxKf57dWrXLJzbEEmV
             }),
         );
         const formatted = coder.instruction.format(ix, accountMetas);
-        // console.log(ix, formatted);
-        console.log(formatted?.args[0]?.data);
+        // console.log(ix, formatted?.accounts[3]?.pubkey.toString());
+        //console.log(formatted?.args[0]?.data);
 
         function convertStringToObject(str) {
             // Add quotes around the keys

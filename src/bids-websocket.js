@@ -19,18 +19,18 @@ const client = new Client({
 });
 
 // Function to initiate or reinitiate WebSocket connection
-function initiateBidsWebSocketConnection() {
+function initiateBidsWebSocketConnection(auction) {
     // const ws = new WebSocket(`wss://atlas-devnet.helius-rpc.com?api-key=${process.env.HELIUS_API_KEY}`); // DEVNET
     const ws = new WebSocket(`wss://atlas-mainnet.helius-rpc.com?api-key=${process.env.HELIUS_API_KEY}`); // MAINNET
-    ws.on('open', () => handleWebSocketOpen(ws));
+    ws.on('open', () => handleWebSocketOpen(ws, auction));
     ws.on('message', handleWebSocketMessage);
     ws.on('error', handleWebSocketError);
-    ws.on('close', () => handleWebSocketClose());
+    ws.on('close', () => handleWebSocketClose(auction));
 }
 
-function handleWebSocketOpen(ws) {
-    console.log('Bids WebSocket is open');
-    sendRequest(ws);
+function handleWebSocketOpen(ws, auction) {
+    console.log('Bids WebSocket is open, auction: ', auction);
+    sendRequest(ws, auction);
 }
 
 function handleWebSocketMessage(data) {
@@ -43,19 +43,18 @@ function handleWebSocketError(err) {
 
 function handleWebSocketClose() {
     console.log('Bids WebSocket is closed. Attempting to reconnect...');
-    setTimeout(initiateBidsWebSocketConnection, 5000); // Reconnect after 5 seconds
+    setTimeout(initiateBidsWebSocketConnection(auction), 5000); // Reconnect after 5 seconds
 }
 
 // Function to send a request to the WebSocket server
-function sendRequest(ws) {
+function sendRequest(ws, auction) {
     const request = {
         jsonrpc: "2.0",
         id: 420,
         method: "transactionSubscribe",
         params: [
             {
-                // accountInclude: ["RadM2sDRatLmA8hnVo79sjUu2n9xpesNsaP5oeuVjmL"]
-                accountInclude: ["3EDZ7GNKfyvwGwWcoze68WSoWievo9sNHtL2tx2MXiZX"]
+                accountInclude: [auction]
             },
             {
                 commitment: "finalized",
@@ -77,7 +76,7 @@ async function processIncomingMessage(data) {
     const messageStr = data.toString('utf8');
     try {
         const messageObj = JSON.parse(messageStr);
-        console.log('Tx found:', messageObj?.params?.result?.signature);
+        // console.log('Tx found:', messageObj?.params?.result?.signature);
 
         if (messageObj?.params?.result?.transaction?.meta?.logMessages[5] === 'Program log: Instruction: DepositNft' && messageObj.params) { // change to === in prod
 
@@ -86,7 +85,7 @@ async function processIncomingMessage(data) {
             const transactionSignature = messageObj?.params?.result?.signature;
             // console.log(transactionSignature);
             (async () => {
-                const conn = new Connection(clusterApiUrl('mainnet-beta', 'finalized'));
+                const conn = new Connection(`https://mainnet.helius-rpc.com/?api-key=${process.env.HELIUS_API_KEY}`, 'finalized');
                 console.log("Waiting starts");
                 await delay(5000); // Timeout needed to fetch mainnet tx
                 console.log("5 seconds have passed");
@@ -190,14 +189,12 @@ async function processIncomingMessage(data) {
 
                                 const newBid = new EmbedBuilder()
                                     .setTitle(BOT)
-                                    .setDescription(`<a:love:1196257367805939712> _**${title}** ${hype}_`) // can change the emoji when inside the said service, right click on the emoji, copy text
+                                    .setDescription(`☀️ _**${title}** ${hype}_`) // can change the emoji when inside the said service, right click on the emoji, copy text
                                     .setColor('#fee185')
                                     .setImage(`${mainImg}`)
                                     .addFields(
                                         {
-                                            name: 'Offerings:', value: `<:5OvGRze_400x400:1197190074731860098> ${DM}: **${dedMonkesCount}x** NFTs
-                                            <:bearslogo:1197189825732821072> ${BR}: **${bearsReloadedCount}x** NFTs
-                                            <a:SkullT:1197201235481219243> Total: **${totalNftsCount}** NFTs 🔥`, inline: true
+                                            name: 'Offerings:', value: `💀 ${DM}: **${dedMonkesCount}x** NFTs\n🐻 ${BR}: **${bearsReloadedCount}x** NFTs\n🏆 Total: **${totalNftsCount}** NFTs 🔥`, inline: true
                                         },
                                     )
                                     .addFields(
@@ -209,7 +206,23 @@ async function processIncomingMessage(data) {
                                     .setFooter({ text: 'https://twitter.com/RadiantsDAO', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/512px-Logo_of_Twitter.svg.png' });
 
                                 // Sending embed
-                                await channel.send({ embeds: [newBid] });
+                                for (const [guildId, guild] of client.guilds.cache) {
+                                    if (config.guilds[guildId]) {
+                                        const channelId = config.guilds[guildId];
+                                        try {
+                                            const channel = await client.channels.fetch(channelId.channelId); // Fetch the channel
+                                            if (channel) {
+                                                await channel.send({ embeds: [newBid] });
+                                            } else {
+                                                console.log(`Channel not found in guild: ${guildId}`);
+                                            }
+                                        } catch (error) {
+                                            console.error(`Failed to send message in guild: ${guildId}, error: ${error}`);
+                                        }
+                                    } else {
+                                        console.log(`No channel configured for guild: ${guildId}`);
+                                    }
+                                }
                             })();
                         })();
                     } else {
@@ -227,7 +240,7 @@ async function processIncomingMessage(data) {
 }
 
 client.login(process.env.TOKEN);
-initiateBidsWebSocketConnection();
+//initiateBidsWebSocketConnection();
 module.exports = { initiateBidsWebSocketConnection };
 
 
