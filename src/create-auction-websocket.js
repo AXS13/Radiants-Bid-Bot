@@ -55,8 +55,8 @@ function sendRequest(ws) {
         method: "transactionSubscribe",
         params: [
             {
-                // accountInclude: ["RadM2sDRatLmA8hnVo79sjUu2n9xpesNsaP5oeuVjmL"]
-                accountInclude: ["B3E6e8h6yhYFvMiEpTyAGi6DvgcisgFHy7wfetahvGuw"]
+                accountInclude: ["RadM2sDRatLmA8hnVo79sjUu2n9xpesNsaP5oeuVjmL"]
+                // accountInclude: ["B3E6e8h6yhYFvMiEpTyAGi6DvgcisgFHy7wfetahvGuw"]
             },
             {
                 commitment: "finalized",
