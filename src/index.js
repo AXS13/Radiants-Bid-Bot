@@ -2,16 +2,17 @@ require('dotenv').config();
 
 const functions = require('./functions.js');
 const { Client, IntentsBitField, EmbedBuilder, PermissionsBitField  } = require('discord.js');
-const { Connection, LAMPORTS_PER_SOL, PublicKey, Message } = require('@solana/web3.js');
-const { initiateWebSocketConnection } = require('./create-auction-websocket.js');
-const { initiateBidsWebSocketConnection } = require('./bids-websocket.js');
+const { Connection } = require('@solana/web3.js');
+// const { initiateWebSocketConnection } = require('./create-auction-websocket.js');
+// const { initiateBidsWebSocketConnection } = require('./bids-websocket.js');
+const { initiateHighBidWebSocketConnection } = require('./highbid-websocket.js');
 const fs = require('fs').promises;
 let config = require('../src/assets/discords.json');
-const connection = new Connection(process.env.SOL_MAINNET);
-const connectionDevnet = new Connection(process.env.SOL_DEVNET);
+// const connection = new Connection(process.env.SOL_MAINNET);
+// const connectionDevnet = new Connection(process.env.SOL_DEVNET);
 const BOT = process.env.BOT;
 
-const CHANNEL_ID = '1175109860115878000';
+// const CHANNEL_ID = '1175109860115878000';
 
 const client = new Client({
     intents: [
@@ -99,5 +100,5 @@ client.on('ready', async (c) => { // Make sure this function is async
 
 
 client.login(process.env.TOKEN);
-initiateWebSocketConnection();
-
+// initiateWebSocketConnection();
+initiateHighBidWebSocketConnection();
