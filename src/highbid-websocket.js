@@ -61,7 +61,7 @@ function initiateHighBidWebSocketConnection(program = "bidoyoucCtwvPJwmW4W9ysXWe
 }
 
 function handleWebSocketOpen(ws, program) {
-    console.log('Program WebSocket is open, program: ', program);
+    console.log('High Bid WebSocket is open, program: ', program);
     sendRequest(ws, program);
 }
 
@@ -70,11 +70,11 @@ function handleWebSocketMessage(data) {
 }
 
 function handleWebSocketError(err) {
-    console.error('Bids WebSocket error:', err);
+    console.error('High Bid WebSocket error:', err);
 }
 
 function handleWebSocketClose() {
-    console.log('Bids WebSocket is closed. Attempting to reconnect...');
+    console.log('High Bid WebSocket is closed. Attempting to reconnect...');
     setTimeout(initiateHighBidWebSocketConnection(program), 5000); // Reconnect after 5 seconds
 }
 
@@ -106,8 +106,6 @@ async function processIncomingMessage(data) {
         const messageObj = JSON.parse(messageStr);
 
         if (messageObj && messageObj.method == "transactionNotification") { // change to === in prod
-
-            console.log('Success! This transaction is a DepositNft transaction.');
 
             const transaction = [messageObj.params.result.transaction];
             // console.log(transaction);
