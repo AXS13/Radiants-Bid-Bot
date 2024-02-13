@@ -5,6 +5,7 @@ const { Connection, clusterApiUrl } = require('@solana/web3.js');
 const anchor = require('@coral-xyz/anchor');
 const IDL = require('../idl/nft-bidding.json');
 
+/*
 const transactionSignature = '4T4wy3sjbhf2PjgbKCiycmWz6M6p6bAAyhocMU27ngEkyHTWvFeEyjT7RqsqwUZ3CTkhbr33KdPfrWS2Q75t3d5M';
 
 (async () => {
@@ -57,19 +58,44 @@ const transactionSignature = '4T4wy3sjbhf2PjgbKCiycmWz6M6p6bAAyhocMU27ngEkyHTWvF
         console.log('Transaction not found or lacks additional data');
     }
 })();
+*/
 
-/* DEVNET TEST FOR MINT IMG DISPLAYING
+//DEVNET TEST FOR MINT IMG DISPLAYING
 
-ttt = '7FfLHuJasGVyE25UHrbgmErnnQsFokCPE113M1Fk8RFC'
+tttt = ["CPYXdB45JxUZDgh5ccGUPtgZeXz1Nwr57oQcsw8Uy2TC"];
 // Using mint to get the image for displaying purpose
-const mint = [
-    ttt
-];
 
 (async () => {
-    const metaMint = await functions.getMetadata(mint);
-    console.log(metaMint[0]?.offChainMetadata?.metadata?.image);
-    console.log(metaMint);
+    const response = await functions.getAssetsByOwner(ttt.toString());
+
+    const acceptedCollections = {
+        "rad7j6PpBLzBas3Yrt59Tsd5ohVuyt614PkBYznBh1a": "Radiants"
+    };
+
+    let imgLink = '';
+
+    // Iterate through each item in the 'items' array
+    response.result.items.forEach(item => {
+        // let name = item.content?.metadata?.name || 'Name not found';
+
+        // Check if the item has the required grouping and if it matches the desired values
+        item.grouping?.forEach(group => {
+            let i = 0;
+            if (group.group_key === 'collection' && acceptedCollections[group.group_value]) {
+                // Get the collection name
+                const collectionName = acceptedCollections[group.group_value];
+                imgLink = response?.result?.items[i]?.content?.links?.image;
+
+                // Log the name and corresponding collection name
+                console.log(`Collection: ${collectionName}`);
+            } else {
+                i++;
+            }
+        });
+    });
+
+    console.log("Data:", imgLink);
+
 })();
 
-*/
+
