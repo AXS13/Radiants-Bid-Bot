@@ -4,6 +4,7 @@ const functions = require('./functions.js');
 const WebSocket = require('ws');
 const { Client, IntentsBitField, EmbedBuilder, hyperlink } = require("discord.js");
 const { Connection, clusterApiUrl } = require('@solana/web3.js');
+let config = require('../src/assets/discords.json');
 const anchor = require('@coral-xyz/anchor');
 const IDL = require('../idl/nft-bidding.json');
 const BOT = process.env.BOT;
@@ -18,19 +19,21 @@ const client = new Client({
     ]
 });
 
+
+
 // Function to initiate or reinitiate WebSocket connection
-function initiateBidsWebSocketConnection(auction) {
+function initiateBidsWebSocketConnection() {
     // const ws = new WebSocket(`wss://atlas-devnet.helius-rpc.com?api-key=${process.env.HELIUS_API_KEY}`); // DEVNET
     const ws = new WebSocket(`wss://atlas-mainnet.helius-rpc.com?api-key=${process.env.HELIUS_API_KEY}`); // MAINNET
-    ws.on('open', () => handleWebSocketOpen(ws, auction));
+    ws.on('open', () => handleWebSocketOpen(ws));
     ws.on('message', handleWebSocketMessage);
     ws.on('error', handleWebSocketError);
-    ws.on('close', () => handleWebSocketClose(auction));
+    ws.on('close', () => handleWebSocketClose());
 }
 
-function handleWebSocketOpen(ws, auction) {
-    console.log('Bids WebSocket is open, auction: ', auction);
-    sendRequest(ws, auction);
+function handleWebSocketOpen(ws, ) {
+    console.log('Bids WebSocket is open.');
+    sendRequest(ws);
 }
 
 function handleWebSocketMessage(data) {
@@ -43,18 +46,18 @@ function handleWebSocketError(err) {
 
 function handleWebSocketClose() {
     console.log('Bids WebSocket is closed. Attempting to reconnect...');
-    setTimeout(initiateBidsWebSocketConnection(auction), 5000); // Reconnect after 5 seconds
+    setTimeout(initiateBidsWebSocketConnection, 5000); // Reconnect after 5 seconds
 }
 
 // Function to send a request to the WebSocket server
-function sendRequest(ws, auction) {
+function sendRequest(ws) {
     const request = {
         jsonrpc: "2.0",
         id: 420,
         method: "transactionSubscribe",
         params: [
             {
-                accountInclude: [auction]
+                accountInclude: ["CPYXdB45JxUZDgh5ccGUPtgZeXz1Nwr57oQcsw8Uy2TC"]
             },
             {
                 commitment: "finalized",
@@ -123,7 +126,8 @@ async function processIncomingMessage(data) {
                             // Don't forget to add the collection id as well as the name of the collection if you add another collection to bid with
                             const acceptedCollections = {
                                 "2SBsLb5CwstwxxDmbanRdvV9vzeACRdvYEJjpPSFjJpE": "Bears Reloaded",
-                                "GxPPZB5q1nsUTPw8Kkp4qUpbegrGxHiJfgzm3V43zjAy": "Ded Monkes"
+                                "GxPPZB5q1nsUTPw8Kkp4qUpbegrGxHiJfgzm3V43zjAy": "Ded Monkes",
+                                "5f2zrjBonizqt6LiHSDfbTPH74sHMZFahYQGyPNh825G": "BAPE",
                             };
 
                             // Counter for occurrences based on collection names
@@ -153,10 +157,11 @@ async function processIncomingMessage(data) {
 
                             let dedMonkesCount = occurrenceCounter['Ded Monkes'] || 0;
                             let bearsReloadedCount = occurrenceCounter['Bears Reloaded'] || 0;
+                            let BAPECount = occurrenceCounter['BAPE'] || 0;
 
                             mainImg = 'https://pbs.twimg.com/profile_banners/1446275363202502844/1697575408/1080x360';
 
-                            let totalNftsCount = dedMonkesCount + bearsReloadedCount;
+                            let totalNftsCount = dedMonkesCount + bearsReloadedCount + BAPECount;
                             let hype = '';
                             let title = '';
 
@@ -177,24 +182,54 @@ async function processIncomingMessage(data) {
                                     console.log('Default Switch');
                             }
 
+                            // GET MINT IMAGE
+                            const responseImg = await functions.getAssetsByOwner('CPYXdB45JxUZDgh5ccGUPtgZeXz1Nwr57oQcsw8Uy2TC');
+                            const acceptedCollection = {
+                                "rad7j6PpBLzBas3Yrt59Tsd5ohVuyt614PkBYznBh1a": "Radiants"
+                            };
+                        
+                            let imgLink = '';
+                        
+                            // Iterate through each item in the 'items' array
+                            responseImg.result.items.forEach(item => {
+                                // let name = item.content?.metadata?.name || 'Name not found';
+                        
+                                // Check if the item has the required grouping and if it matches the desired values
+                                item.grouping?.forEach(group => {
+                                    let i = 0;
+                                    if (group.group_key === 'collection' && acceptedCollection[group.group_value]) {
+                                        // Get the collection name
+                                        const collectionName = acceptedCollection[group.group_value];
+                                        imgLink = responseImg?.result?.items[i]?.content?.links?.image;
+                        
+                                        // Log the name and corresponding collection name
+                                        console.log(`Collection: ${collectionName}`);
+                                    } else {
+                                        i++;
+                                    }
+                                });
+                            });
+                        
+                            //console.log("Data:", imgLink);
+
                             // Discord displaying
                             (async () => {
-                                const channel = await client.channels.fetch(CHANNEL_ID);
-
                                 const solscan = hyperlink('Solscan', `https://solscan.io/account/${owner}`);
                                 const solanafm = hyperlink('SolanaFM', `https://solana.fm/address/${owner}`);
 
                                 const DM = hyperlink('Ded Monkes', 'https://twitter.com/DegenMonkes');
                                 const BR = hyperlink('Bears Reloaded', 'https://twitter.com/BearsReloaded');
+                                const BAPE = hyperlink('BAPE', 'https://twitter.com/wearebuilders_');
 
                                 const newBid = new EmbedBuilder()
                                     .setTitle(BOT)
                                     .setDescription(`☀️ _**${title}** ${hype}_`) // can change the emoji when inside the said service, right click on the emoji, copy text
+                                    .setThumbnail(`${imgLink}`)
                                     .setColor('#fee185')
                                     .setImage(`${mainImg}`)
                                     .addFields(
                                         {
-                                            name: 'Offerings:', value: `💀 ${DM}: **${dedMonkesCount}x** NFTs\n🐻 ${BR}: **${bearsReloadedCount}x** NFTs\n🏆 Total: **${totalNftsCount}** NFTs 🔥`, inline: true
+                                            name: 'Offerings:', value: `💀 ${DM}: **${dedMonkesCount}x** NFTs\n🐻 ${BR}: **${bearsReloadedCount}x** NFTs\n🦍 ${BAPE}: **${BAPECount}x** NFTs\n🏆 Total: **${totalNftsCount}** NFTs 🔥`, inline: true
                                         },
                                     )
                                     .addFields(
@@ -212,7 +247,11 @@ async function processIncomingMessage(data) {
                                         try {
                                             const channel = await client.channels.fetch(channelId.channelId); // Fetch the channel
                                             if (channel) {
-                                                await channel.send({ embeds: [newBid] });
+                                                if (totalNftsCount !== 0) {
+                                                    await channel.send({ embeds: [newBid] });
+                                                } else {
+                                                    console.log('No NFTs to display. Most likely a failed transaction or unsupported collection.');
+                                                }
                                             } else {
                                                 console.log(`Channel not found in guild: ${guildId}`);
                                             }
@@ -240,7 +279,7 @@ async function processIncomingMessage(data) {
 }
 
 client.login(process.env.TOKEN);
-//initiateBidsWebSocketConnection();
+initiateBidsWebSocketConnection();
 module.exports = { initiateBidsWebSocketConnection };
 
 
