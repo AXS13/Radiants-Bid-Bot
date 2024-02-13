@@ -76,7 +76,7 @@ client.on('messageCreate', async message => {
         }
     }
 });
-
+/*
 client.on('ready', async (c) => { // Make sure this function is async
     for (const [guildId, guild] of client.guilds.cache) {
         if (config.guilds[guildId]) {
@@ -96,7 +96,7 @@ client.on('ready', async (c) => { // Make sure this function is async
         }
     }
 });
-
+*/
 
 
 client.login(process.env.TOKEN);

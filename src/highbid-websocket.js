@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const WebSocket = require('ws');
 const { Client, IntentsBitField, EmbedBuilder, hyperlink } = require("discord.js");
-const { Connection } = require('@solana/web3.js');
+const { Connection, PublicKey } = require('@solana/web3.js');
 const anchor = require('@coral-xyz/anchor');
 const IDL = require('../idl/nft-bidding.json');
 const BOT = process.env.BOT;
@@ -31,7 +31,7 @@ const providerConnection = new Connection(providerUrl, {
 });
 
 const readOnlyWallet = {
-    publicKey: Keypair.generate().publicKey,
+    publicKey: anchor.web3.Keypair.generate().publicKey,
     signTransaction: async (tx) => {
         throw new Error(
             "Can't call signTransaction() on read only wallet"
@@ -45,11 +45,11 @@ const readOnlyWallet = {
 };
 // Set the provider
 // Returns a provider read from the ANCHOR_PROVIDER_URL environment variable
-export const provider = new anchor.AnchorProvider(providerConnection, readOnlyWallet, providerOptions)
+const provider = new anchor.AnchorProvider(providerConnection, readOnlyWallet, providerOptions)
 anchor.setProvider(provider);
 
 // Generate the program client from IDL
-export const program = new anchor.Program(IDL, new PublicKey("bidoyoucCtwvPJwmW4W9ysXWeesgvGxEYxkXmoXTaHy"), provider);
+const program = new anchor.Program(IDL, new PublicKey("bidoyoucCtwvPJwmW4W9ysXWeesgvGxEYxkXmoXTaHy"), provider);
 // Function to initiate or reinitiate WebSocket connection
 function initiateHighBidWebSocketConnection(program = "bidoyoucCtwvPJwmW4W9ysXWeesgvGxEYxkXmoXTaHy") {
     // const ws = new WebSocket(`wss://atlas-devnet.helius-rpc.com?api-key=${process.env.HELIUS_API_KEY}`); // DEVNET
@@ -202,8 +202,6 @@ async function processIncomingMessage(data) {
 
                             // Discord displaying
                             (async () => {
-                                const channel = await client.channels.fetch(CHANNEL_ID);
-
                                 const solscan = hyperlink('Solscan', `https://solscan.io/account/${highestBidderPubkey}`);
                                 const solanafm = hyperlink('SolanaFM', `https://solana.fm/address/${highestBidderPubkey}`);
 
