@@ -7,6 +7,8 @@ const anchor = require('@coral-xyz/anchor');
 const IDL = require('../idl/nft-bidding.json');
 const BOT = process.env.BOT;
 const CHANNEL_ID = process.env.CHANNEL_ID;
+const bs58 = require('bs58');
+const config = require('../src/assets/discords.json');
 
 const client = new Client({
     intents: [
@@ -111,6 +113,7 @@ async function processIncomingMessage(data) {
             // console.log(transaction);
 
             const occurrenceCounter = {};
+            const floorPriceTracker = {};
             const acceptedCollections = {
                 "2SBsLb5CwstwxxDmbanRdvV9vzeACRdvYEJjpPSFjJpE": "Bears Reloaded",
                 "GxPPZB5q1nsUTPw8Kkp4qUpbegrGxHiJfgzm3V43zjAy": "Ded Monkes",
@@ -157,15 +160,19 @@ async function processIncomingMessage(data) {
                             // const highestBidTs = Number(highBidIx.args.highestBidTs);
                             const highestBidderPubkey = highBidIx.args.highestBidder;
                             const highestBidPubkey = highBidIx.args.highestBid;
-                            let bidData =  await program.account.bidEscrow.fetch(highestBidPubkey);
+                            let bidData = await program.account.bidEscrow.fetch(highestBidPubkey);
                             let collectionsInBid = await bidData.collections;
+                            let oracles = await program.account.oracle.all();
                             for(let i = 0; i < collectionsInBid.length; i++) {
                                 let currentCollectionObject = collectionsInBid[i];
                                 let currentCollectionCount = Number(currentCollectionObject.count);
                                 let currentCollectionId = currentCollectionObject.value.toString();
+                                let currentCollectionOracle = oracles.find((oracle) => oracle.account.collection.toString() === currentCollectionId);
+                                let currentCollectionFloorPrice = Number(currentCollectionOracle.account.floorPrice)/1000000000; // this has 9 decimals
                                 if(currentCollectionId !== "SUB1orE6jSMF8K627BPLXyJY5LthVyDriAxTXdCF4Cy") {
                                     let currentCollectionName = acceptedCollections[currentCollectionId];
                                     occurrenceCounter[currentCollectionName] = currentCollectionCount;
+                                    floorPriceTracker[currentCollectionName] = currentCollectionFloorPrice;
                                 }
                             }
 
@@ -176,10 +183,15 @@ async function processIncomingMessage(data) {
                             let bearsReloadedCount = occurrenceCounter['Bears Reloaded'] || 0;
                             let bapeCount = occurrenceCounter['BAPE'] || 0;
                             let lifinityCount = occurrenceCounter['LIFINITY Flares'] || 0;
+                            let dedMonkesFloorPrice = floorPriceTracker['Ded Monkes'] || 0;
+                            let bearsReloadedFloorPrice = floorPriceTracker['Bears Reloaded'] || 0;
+                            let bapeFloorPrice = floorPriceTracker['BAPE'] || 0;
+                            let lifinityFloorPrice = floorPriceTracker['LIFINITY Flares'] || 0;
 
                             mainImg = 'https://pbs.twimg.com/profile_banners/1446275363202502844/1697575408/1080x360';
 
                             let totalNftsCount = dedMonkesCount + bearsReloadedCount + bapeCount + lifinityCount;
+                            let totalFloorPrice = (dedMonkesFloorPrice*dedMonkesCount) + (bearsReloadedFloorPrice*bearsReloadedCount) + (bapeFloorPrice*bapeCount) + (lifinityFloorPrice*lifinityCount);
                             let hype = '';
                             let title = '';
 
@@ -217,7 +229,7 @@ async function processIncomingMessage(data) {
                                     .setImage(`${mainImg}`)
                                     .addFields(
                                         {
-                                            name: 'Offerings:', value: `💀 ${DM}: **${dedMonkesCount}x** NFTs\n🐻 ${BR}: **${bearsReloadedCount}x** NFTs\n🐵 ${BP}: **${bapeCount}x** NFTs\n🔥 ${LF}: **${lifinityCount}x** NFTs\n🏆 Total: **${totalNftsCount}** NFTs 🔥`, inline: true
+                                            name: 'Offerings:', value: `💀 ${DM}: **${dedMonkesCount}x** NFTs | Floor: **${dedMonkesFloorPrice}** | Value: **${(dedMonkesFloorPrice*dedMonkesCount).toFixed(2)}**\n🐻 ${BR}: **${bearsReloadedCount}x** NFTs | Floor: **${bearsReloadedFloorPrice}** | Value: **${(bearsReloadedFloorPrice*bearsReloadedCount).toFixed(2)}**\n🐵 ${BP}: **${bapeCount}x** NFTs | Floor: **${bapeFloorPrice}** | Value: **${(bapeFloorPrice*bapeCount).toFixed(2)}**\n🔥 ${LF}: **${lifinityCount}x** NFTs | Floor: **${lifinityFloorPrice}** | Value: **${(lifinityFloorPrice*lifinityCount).toFixed(2)}**\n🏆 Total: **${totalNftsCount}** NFTs 💛 | Value: **${totalFloorPrice.toFixed(2)}** SOL`, inline: true
                                         },
                                     )
                                     .addFields(
