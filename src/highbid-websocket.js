@@ -77,7 +77,7 @@ function handleWebSocketError(err) {
 
 function handleWebSocketClose() {
     console.log('High Bid WebSocket is closed. Attempting to reconnect...');
-    setTimeout(initiateHighBidWebSocketConnection(program), 5000); // Reconnect after 5 seconds
+    setTimeout(() => initiateHighBidWebSocketConnection(), 5000); // Reconnect after 5 seconds
 }
 
 // Function to send a request to the WebSocket server
@@ -192,25 +192,6 @@ async function processIncomingMessage(data) {
 
                             let totalNftsCount = dedMonkesCount + bearsReloadedCount + bapeCount + lifinityCount;
                             let totalFloorPrice = (dedMonkesFloorPrice*dedMonkesCount) + (bearsReloadedFloorPrice*bearsReloadedCount) + (bapeFloorPrice*bapeCount) + (lifinityFloorPrice*lifinityCount);
-                            let hype = '';
-                            let title = '';
-
-                            switch (true) {
-                                case (totalNftsCount < 10):
-                                    hype = '🔥'
-                                    title = 'A new offering has just been presented.';
-                                    break;
-                                case (totalNftsCount > 10 && totalNftsCount < 50):
-                                    hype = '🔥🔥'
-                                    title = 'A remarkable new offering has been revealed, drawing considerable attention.';
-                                    break;
-                                case (totalNftsCount > 50):
-                                    hype = '🔥🔥🔥'
-                                    title = 'A truly sensational and unprecedented offering has just been unveiled, stirring immense excitement and awe.';
-                                    break;
-                                default:
-                                    console.log('Default Switch');
-                            }
 
                             // Discord displaying
                             (async () => {
@@ -223,8 +204,8 @@ async function processIncomingMessage(data) {
                                 const LF = hyperlink('LIFINITY Flares', 'https://twitter.com/Lifinity_io');
 
                                 const newBid = new EmbedBuilder()
-                                    .setTitle(BOT)
-                                    .setDescription(`☀️ _**${title}** ${hype}_`) // can change the emoji when inside the said service, right click on the emoji, copy text
+                                    .setTitle(`**_Prepare the incinerator..._**`)
+                                    .setDescription(`**A new high bid has been set!** 🔥`) // can change the emoji when inside the said service, right click on the emoji, copy text
                                     .setColor('#fce185')
                                     .setImage(`${mainImg}`)
                                     .addFields(
