@@ -167,7 +167,9 @@ async function processIncomingMessage(data) {
                                 let currentCollectionObject = collectionsInBid[i];
                                 let currentCollectionCount = Number(currentCollectionObject.count);
                                 let currentCollectionId = currentCollectionObject.value.toString();
-                                let currentCollectionOracle = oracles.find((oracle) => oracle.account.collection.toString() === currentCollectionId);
+                                // let currentCollectionOracle = oracles.find((oracle) => oracle.account.collection.toString() === currentCollectionId);
+                                let currentCollectionOracle = oracles.find((oracle) => oracle && oracle.account && oracle.account.collection && oracle.account.collection.toString() === currentCollectionId);
+                                // console.log(Number(currentCollectionOracle?.account?.floorPrice)/1000000000);
                                 let currentCollectionFloorPrice = Number(currentCollectionOracle.account.floorPrice)/1000000000; // this has 9 decimals
                                 if(currentCollectionId !== "SUB1orE6jSMF8K627BPLXyJY5LthVyDriAxTXdCF4Cy") {
                                     let currentCollectionName = acceptedCollections[currentCollectionId];
@@ -211,6 +213,7 @@ async function processIncomingMessage(data) {
                                     .addFields(
                                         {
                                             name: 'Offerings:', value: `💀 ${DM}: **${dedMonkesCount}x** NFTs | Floor: **${dedMonkesFloorPrice}** | Value: **${(dedMonkesFloorPrice*dedMonkesCount).toFixed(2)}**\n🐻 ${BR}: **${bearsReloadedCount}x** NFTs | Floor: **${bearsReloadedFloorPrice}** | Value: **${(bearsReloadedFloorPrice*bearsReloadedCount).toFixed(2)}**\n🐵 ${BP}: **${bapeCount}x** NFTs | Floor: **${bapeFloorPrice}** | Value: **${(bapeFloorPrice*bapeCount).toFixed(2)}**\n🔥 ${LF}: **${lifinityCount}x** NFTs | Floor: **${lifinityFloorPrice}** | Value: **${(lifinityFloorPrice*lifinityCount).toFixed(2)}**\n🏆 Total: **${totalNftsCount}** NFTs 💛 | Value: **${totalFloorPrice.toFixed(2)}** SOL`, inline: true
+                                            // name: 'Offerings:', value: `💀 ${DM}: **${dedMonkesCount}x** NFTs\n🐻 ${BR}: **${bearsReloadedCount}x** NFTs\n🐵 ${BP}: **${bapeCount}x** NFTs\n🔥 ${LF}: **${lifinityCount}x** NFTs\n🏆 Total: **${totalNftsCount}** NFTs 💛`, inline: true
                                         },
                                     )
                                     .addFields(
@@ -256,8 +259,3 @@ async function processIncomingMessage(data) {
 client.login(process.env.TOKEN);
 //initiateHighBidWebSocketConnection();
 module.exports = { initiateHighBidWebSocketConnection };
-
-
-
-
-
